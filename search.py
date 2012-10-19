@@ -3,6 +3,7 @@ from base64 import b64encode
 import flask
 import requests
 import sys
+import os
 import subprocess
 import logging
 from path import path
@@ -88,7 +89,46 @@ def index(file_path):
         if index_resp.status_code == 200:
             log.info('Skipping. Already indexed!')
 
+def replace(match, text, debug=False):
+    changes_log_path = path(flask.current_app.config['PUBDOCS_CHANGES_LOG'])
+    class bcolors:
+        HEADER = '\033[95m'
+        OKBLUE = '\033[94m'
+        OKGREEN = '\033[92m'
+        WARNING = '\033[93m'
+        FAIL = '\033[91m'
+        ENDC = '\033[0m'
+    try:
+        bad = match.group(0)
+        good = utils.chars_mapping[bad]
+        old = (text[match.start()-10:match.start()] +
+               bcolors.FAIL +
+               bad +
+               bcolors.ENDC +
+               text[match.end():match.end()+10]
+              )
+        new = (text[match.start()-10:match.start()] +
+               bcolors.OKGREEN +
+               good +
+               bcolors.ENDC +
+               text[match.end():match.end()+10]
+              )
+        text = text.replace(bad, good)
+        message = '%s\n%s\n' %(old, new)
+        if debug:
+            log.info(message)
+        else:
+            with changes_log_path.open('a') as clog:
+                clog.write('------------%s------------\n' %bad)
+                sys.stdout.write(message)
+    except Exception as exp:
+        if debug:
+            pass
+            #import pdb; pdb.set_trace()
 
+import re
+pat3 = re.compile(r'([^\x00-\x7F][^\x00-\x7F][^\x00-\x7F])')
+pat2 = re.compile(r'([^\x00-\x7F][^\x00-\x7F])')
 def clean(file_path, debug):
     """ Index a file from the repositoy. """
     if not debug == 'debug':
@@ -96,40 +136,17 @@ def clean(file_path, debug):
     fs_path = path(file_path)
     cursor = 0
     total = fs_path.getsize()
-    if debug:
-        def custom_handler(err):
-            raise Exception(err.object)
-
-        import codecs
-        codecs.register_error('custom_handler', custom_handler)
 
     with fs_path.open('r') as data:
         with NamedTempFile(mode='a', delete=False) as cleaned:
-            chunk = data.read(100)
-            while chunk:
-                while (chunk[-1] not in ['\n'] and
-                      (cursor < total)):
-                    chunk += data.read(1)
-                    cursor += 1
-                try:
-                    chunk.decode('ascii', 'custom_handler')
-                except Exception as exp:
-                    #getting here means it needs correction
-                    for bad, good in utils.chars_mapping.iteritems():
-                        chunk = chunk.replace(bad, good)
-                    try:
-                        chunk.decode('ascii', 'custom_handler')
-                    except Exception as exp:
-                        #getting hear means no correction found
-                        if debug:
-                            import pdb; pdb.set_trace()
-                cleaned.write(chunk)
-                chunk = data.read(100)
-                cursor += len(chunk)
-            cleaned.flush()
+            text = data.read()
+            for match in pat3.finditer(text):
+                replace(match, text)
+            for match in pat2.finditer(text):
+                replace(match, text)
     with open(cleaned.name, 'rb') as f:
         with fs_path.open('wb') as origin:
-            origin.write(f.read())
+            origin.write(text)
 
 
 @search_pages.route('/')
@@ -200,7 +217,9 @@ def register_commands(manager):
         """ Bulk index pdfs from specified section. """
         import os
         import subprocess
-
+        changes_log_path = path(flask.current_app.config['PUBDOCS_CHANGES_LOG'])
+        if changes_log_path.exists():
+            os.remove(changes_log_path)
         section_path = flask.current_app.config['PUBDOCS_FILE_REPO'] / section
         args = 'find %s -name "*.pdf" | wc -l' % (str(section_path))
         total = int(subprocess.check_output(args, shell=True))
@@ -210,6 +229,7 @@ def register_commands(manager):
             for doc_path in year_path.files():
                 name = doc_path.name
                 index.delay(doc_path)
+                #index(doc_path)
                 indexed += 1
                 sys.stdout.write("\r%i/%i" % (indexed, total))
                 sys.stdout.flush()
