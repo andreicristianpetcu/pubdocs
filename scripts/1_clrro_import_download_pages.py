@@ -5,32 +5,40 @@ import sys, os
 def get_years_with_laws():
     # appearantly we do not have laws in all years since 1864.
     # I chose the years from http://www.clr.ro/rep_dil_2002/rep.aspx
-    years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
-             1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
-    years += range(1942, 2012)
+#    years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
+#             1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
+#    years += range(1942, 2012)
+#    return years
+    years = range(2009, 2011)
     return years
 
 def generate_laws(temporaryDirectory):
     for year in get_years_with_laws():
-        fetch_laws_page_from_year(year, temporaryDirectory)
+        fetch_laws_page_from_year(str(year), temporaryDirectory)
   
 def fetch_laws_page_from_year(year, temporaryDirectory):  
-    url = get_ugly_url_for_laws(str(year))
-    browser = Browser()
-    browser.open(url)
-    html = browser.response().get_data()
-
     lawsDirectory = os.path.join(temporaryDirectory, "cdep_ro", "all_laws");
     if not os.path.exists(lawsDirectory):
         os.makedirs(lawsDirectory)
         print('The laws directory did not exist so I created it')
         print(lawsDirectory)
 
-    print(lawsDirectory)
-    with open ('clr.ro-laws-' + year + '.html', 'a') as f: 
-        f.write (html)
-    
-    print(html)
+    fileToWriteLawsListIn = os.path.join(lawsDirectory, year + '.html')
+    print('File to write in is ' + fileToWriteLawsListIn)
+    lawWasNotDownloaded = not os.path.isfile(fileToWriteLawsListIn)
+    if lawWasNotDownloaded:
+        print("Getting laws from year " + year)
+        url = get_ugly_url_for_laws(year)
+        browser = Browser()
+        browser.open(url)
+        html = browser.response().get_data()
+        with open(fileToWriteLawsListIn, 'a') as f: 
+            f.write (html)
+        print("Finished downloading laws for year " + year)
+    else:
+        print('This year was already fetched ' + year 
+              + '. Skipping to the next year')
+
   
 def get_ugly_url_for_laws(year):
     url = "http://www.clr.ro/rep_dil_2002/viewGrid.aspx?Type=Submit&pk1=SELECT%20*%20FROM%20legi%20Where%20legi.cod%20Like%20%27%nr.%/"
@@ -43,7 +51,6 @@ def get_ugly_url_for_laws(year):
     return url
     
 def main():
-    print(sys.argv)
     temporaryDirectory = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/'
     generate_laws(temporaryDirectory)
 
