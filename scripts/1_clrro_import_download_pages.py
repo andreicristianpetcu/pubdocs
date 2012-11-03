@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from mechanize import Browser
-import sys, logging
+import sys, os
 
 def get_years_with_laws():
     # appearantly we do not have laws in all years since 1864.
@@ -10,16 +10,23 @@ def get_years_with_laws():
     years += range(1942, 2012)
     return years
 
-def generate_laws():
+def generate_laws(temporaryDirectory):
     for year in get_years_with_laws():
-        fetch_laws_page_from_year('2006')
+        fetch_laws_page_from_year(year, temporaryDirectory)
   
-def fetch_laws_page_from_year(year):  
-    url = get_ugly_url_for_laws(year)
+def fetch_laws_page_from_year(year, temporaryDirectory):  
+    url = get_ugly_url_for_laws(str(year))
     browser = Browser()
     browser.open(url)
     html = browser.response().get_data()
-    
+
+    lawsDirectory = os.path.join(temporaryDirectory, "cdep_ro", "all_laws");
+    if not os.path.exists(lawsDirectory):
+        os.makedirs(lawsDirectory)
+        print('The laws directory did not exist so I created it')
+        print(lawsDirectory)
+
+    print(lawsDirectory)
     with open ('clr.ro-laws-' + year + '.html', 'a') as f: 
         f.write (html)
     
@@ -36,7 +43,8 @@ def get_ugly_url_for_laws(year):
     return url
     
 def main():
-#    generate_laws()
-    print(get_years_with_laws())
+    print(sys.argv)
+    temporaryDirectory = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/'
+    generate_laws(temporaryDirectory)
 
 if  __name__ == '__main__':main()

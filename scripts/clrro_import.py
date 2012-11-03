@@ -16,7 +16,7 @@ if tmpDir is None:
 
 if not os.path.exists(tmpDir):
     os.makedirs(tmpDir)
-    print('The work directory did not exist so I created It')
+    print('The work directory did not exist so I created it')
     print(tmpDir)
     
 subprocess.check_call(["./1_clrro_import_download_pages.py", tmpDir])
