@@ -18,5 +18,7 @@ if not os.path.exists(tmpDir):
     os.makedirs(tmpDir)
     print('The work directory did not exist so I created it')
     print(tmpDir)
-    
-subprocess.check_call(["./1_clrro_import_download_pages.py", tmpDir])
+
+clr_ro_dir = os.path.join(tmpDir, 'clr_ro');
+subprocess.check_call(["./1_clrro_fetch_laws_per_year.py", clr_ro_dir])
+subprocess.check_call(["./2_clrro_fetch_individual_laws.py", clr_ro_dir])

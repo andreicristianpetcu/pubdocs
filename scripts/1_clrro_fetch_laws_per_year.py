@@ -9,6 +9,9 @@ def get_years_with_laws():
     years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
              1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
     years += range(1942, 2012)
+    
+    # dev only
+#    years = range(2010, 2012)
     return years
 
 def generate_laws(temporaryDirectory):
@@ -18,7 +21,7 @@ def generate_laws(temporaryDirectory):
         fetch_laws_page_from_year(str(year), temporaryDirectory)
   
 def fetch_laws_page_from_year(year, temporaryDirectory):  
-    lawsDirectory = os.path.join(temporaryDirectory, 'cdep_ro', 'all_laws');
+    lawsDirectory = os.path.join(temporaryDirectory, 'all_laws');
     if not os.path.exists(lawsDirectory):
         os.makedirs(lawsDirectory)
         print('The laws directory did not exist so I created it')
@@ -57,7 +60,7 @@ def get_ugly_url_for_laws(year):
     return url
     
 def main():
-    temporaryDirectory = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/'
+    temporaryDirectory = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/clr_ro'
     generate_laws(temporaryDirectory)
 
 if  __name__ == '__main__':main()
