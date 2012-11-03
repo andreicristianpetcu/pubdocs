@@ -6,11 +6,9 @@ import sys, os, time
 def get_years_with_laws():
     # appearantly we do not have laws in all years since 1864.
     # I chose the years from http://www.clr.ro/rep_dil_2002/rep.aspx
-#    years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
-#             1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
-#    years += range(1942, 2012)
-#    return years
-    years = range(2006, 2012)
+    years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
+             1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
+    years += range(1942, 2012)
     return years
 
 def generate_laws(temporaryDirectory):
