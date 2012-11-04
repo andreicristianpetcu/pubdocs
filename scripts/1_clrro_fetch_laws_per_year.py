@@ -12,7 +12,7 @@ def get_years_with_laws():
     
     # dev only
 #    years = range(2010, 2012)
-    return years
+    return sorted(years,reverse=True)
 
 def generate_laws(temporaryDirectory):
     years_with_laws = get_years_with_laws()
