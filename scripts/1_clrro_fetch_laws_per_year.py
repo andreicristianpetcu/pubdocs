@@ -8,10 +8,10 @@ def get_years_with_laws():
     # I chose the years from http://www.clr.ro/rep_dil_2002/rep.aspx
     years = [1864, 1865, 1879, 1881, 1887, 1909, 1916, 1918, 1919, 1924, 1925,
              1927, 1929, 1930, 1931, 1933, 1934, 1937, 1938, 1940]
-    years += range(1942, 2012)
+    years += range(1942, 2013)
     
     # dev only
-#    years = range(2010, 2012)
+    years = range(2010, 2013)
     return sorted(years,reverse=True)
 
 def generate_laws(temporaryDirectory):
@@ -37,13 +37,13 @@ def fetch_laws_page_from_year(year, temporaryDirectory):
         url = get_ugly_url_for_laws(year)
         browser = Browser()
         browser.open(url)
-        html = browser.response().get_data()
 
         with open(fileToWriteLawsListIn, 'a') as f: 
             f.write (html)
 
         endDownload = int(round(time.time() * 1000))
-        print('Finished downloading laws for year ' + year + '. It took only ' + str(endDownload - startDownload) + ' milliseconds')
+        print('Finished downloading laws for year ' + year + '. It took only ' 
+              + str(endDownload - startDownload) + ' milliseconds')
     else:
         print('This year was already fetched ' + year 
               + '. Skipping to the next year')
