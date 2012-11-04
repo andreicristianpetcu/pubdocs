@@ -37,6 +37,7 @@ def fetch_laws_page_from_year(year, temporaryDirectory):
         url = get_ugly_url_for_laws(year)
         browser = Browser()
         browser.open(url)
+        html = browser.response().get_data()
 
         with open(fileToWriteLawsListIn, 'a') as f: 
             f.write (html)
@@ -60,7 +61,7 @@ def get_ugly_url_for_laws(year):
     return url
     
 def main():
-    temporaryDirectory = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/clr_ro'
+    temporaryDirectory = sys.argv[1]
     generate_laws(temporaryDirectory)
 
 if  __name__ == '__main__':main()

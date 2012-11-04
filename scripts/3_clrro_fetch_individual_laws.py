@@ -12,7 +12,7 @@ def get_all_downloaded_laws_per_year(temporary_clr_ro_dir):
             parse_file(laws_file)
             
 def parse_file(laws_file):
-    print(laws_file)
+    print('Parsing for law details ' + laws_file)
     with open(laws_file) as file:
         laws_file_data = file.read()
     
@@ -37,7 +37,8 @@ def parse_file(laws_file):
         print(pasive_function)
 
 def main():
-    temporary_clr_ro_dir = sys.argv[1] if len(sys.argv)>1 else '/tmp/legilibere/clr_ro/all_laws'
+    print("Fetching law details")
+    temporary_clr_ro_dir = sys.argv[1]
     get_all_downloaded_laws_per_year(temporary_clr_ro_dir)
 
 if __name__ == '__main__':main()
