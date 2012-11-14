@@ -39,6 +39,15 @@ def clean_file(dirty_file):
 def remove_unbalanced_tags(content):
     content = content.replace('</HEAD>', '').replace('<HEAD>', '')
     content = content.replace('</head>', '').replace('<head>', '')
+    content = content.replace('<BR>', '').replace('<HR>', '')
+    content = content.replace('<CENTER>', '')
+    content = content.replace('<font color=navy>', '<font color="Navy">')
+    content = content.replace('<font color=Green>', '<font color="Green">')
+    content = content.replace('<font color=RoyalBlue>', '<font color="RoyalBlue">')
+    content = content.replace('<font color=Red>', '<font color="Red">')
+    content = content.replace('</font color>', '</font>')
+    content = content.replace('<HR WIDTH = 65% Align=Center SIZE=1>', '')
+    content = content.replace('<font face="Arial" color="Black" size="2">', '<font>')
     return content
 
 def main():
