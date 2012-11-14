@@ -25,8 +25,13 @@ def clean_file(dirty_file):
     with open(dirty_file) as file:
         dirty_file_content = file.read()
         
-    dirty_file_content = dirty_file_content.replace('windows-1250', 'utf-8')
-    decoded_content = dirty_file_content.decode('windows-1250')
+    tmp_file_content = ''
+    for line in dirty_file_content.split('\n'):
+        if not line.startswith('<input type="hidden" name="__VIEWSTATE"'):
+            tmp_file_content += line
+        
+    tmp_file_content = tmp_file_content.replace('windows-1250', 'utf-8')
+    decoded_content = tmp_file_content.decode('windows-1250')
     utf8_conent = decoded_content.encode('UTF-8')
     removed_unbalanced_tags = remove_unbalanced_tags(utf8_conent)
     return removed_unbalanced_tags 
@@ -37,7 +42,8 @@ def remove_unbalanced_tags(content):
     return content
 
 def main():
-    print("Cleaning files")
+    print(__file__)
+    print(str(sys.argv))
     downloaded_files_dir = sys.argv[1]
     clean_files_dir = sys.argv[2]
     clean_all_downloaded_files(downloaded_files_dir, clean_files_dir)

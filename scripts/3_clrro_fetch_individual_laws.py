@@ -37,7 +37,8 @@ def parse_file(laws_file):
         print(pasive_function)
 
 def main():
-    print("Fetching law details")
+    print(__file__)
+    print(str(sys.argv))
     temporary_clr_ro_dir = sys.argv[1]
     get_all_downloaded_laws_per_year(temporary_clr_ro_dir)
 

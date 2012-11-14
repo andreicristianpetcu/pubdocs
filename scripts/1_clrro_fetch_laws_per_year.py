@@ -61,7 +61,9 @@ def get_ugly_url_for_laws(year):
     return url
     
 def main():
-    temporaryDirectory = sys.argv[1]
-    generate_laws(temporaryDirectory)
+    print(__file__)
+    print(str(sys.argv))
+#    temporaryDirectory = sys.argv[1]
+#    generate_laws(temporaryDirectory)
 
 if  __name__ == '__main__':main()
