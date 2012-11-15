@@ -37,46 +37,23 @@ def parse_rows_with_sax(file_to_parse):
                     column = -1
                 elif elem.tag == 'td':
                     column += 1
-                    row[column] = elem.text
+                    row[column] = str(elem.text)
+                elif elem.tag == 'a':
+                    row[column] = elem.get('href')
                 else:
-                    row[column].append(elem.text)
+                     row[column] += str(elem.text)
+                        
         elif event == 'end':
             if elem.tag == 'table':
                 parsing_table = False
-            
+                break
                 
+    return rows
  
 def parse_file(laws_file):
     print('Parsing for law details ' + laws_file)
-    parse_rows_with_sax(laws_file)
-    
-    with open(laws_file) as file:
-        laws_file_data = file.read()
-        
-    try:
-       html_page = parse.fromstring(laws_file_data)
-    except:
-       debug_parse_with_sax(laws_file)
-       e = sys.exc_info()[0]
-       raise e
-    
-    law_table_rows = html_page.findall(
-        "body/center/form/span/center/span/center/span[2]/center/table/tbody/tr")
-    
-    if len(law_table_rows) > 0:
-      print "Working on ", laws_file, ", laws: ", len(law_table_rows)
-    
-    for table_row in law_table_rows:
-      column_in_table = table_row.findall("td")
-      
-      if column_in_table:
-        law_number_from_year = column_in_table[1].find('font/i/a').attrib
-        law_natural_id = law_number_from_year.replace('.', '').replace('/', '_')
-        active_function = column_in_table[3].find('font/i/a').attrib
-        pasive_function = column_in_table[4].find('font/i/a').attrib
-        print(law_natural_id)
-        print(active_function)
-        print(pasive_function)
+    parsed_rows = parse_rows_with_sax(laws_file)
+    print(str(len(parsed_rows)) + ' Laws found in file ' + laws_file)
 
 def main():
     print(__file__)

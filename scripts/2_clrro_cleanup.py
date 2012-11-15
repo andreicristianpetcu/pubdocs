@@ -22,42 +22,46 @@ def clean_all_downloaded_files(downloaded_files_dir, clean_files_dir):
                 file.write (clean_file_content)
             
 def clean_file(dirty_file):
+    """This method removes various useless parts of the file."""
     with open(dirty_file) as file:
         dirty_file_content = file.read()
         
     tmp_file_content = ''
     for line in dirty_file_content.split('\n'):
+        # Skip the realy realy big input. This input has a huge value.
         if not line.startswith('<input type="hidden" name="__VIEWSTATE"'):
-            tmp_file_content += line
-        
+            tmp_file_content += line      
+    # Use propper UTF-8 encoding
     tmp_file_content = tmp_file_content.replace('windows-1250', 'utf-8')
     decoded_content = tmp_file_content.decode('windows-1250')
     utf8_conent = decoded_content.encode('UTF-8')
-    removed_unbalanced_tags = remove_unbalanced_tags(utf8_conent)
+    removed_unbalanced_tags = clean_xml_document_for_parser(utf8_conent)
     return removed_unbalanced_tags 
 
-def remove_unbalanced_tags(content):
+def clean_xml_document_for_parser(content):
+    """This method cleans the document so it will not break the DOM parser."""
+    # Remove unbalanced tags
+    # Some tags appear only opened or closed
     content = content.replace('</HEAD>', '').replace('<HEAD>', '')
     content = content.replace('</head>', '').replace('<head>', '')
     content = content.replace('<BR>', '').replace('<HR>', '')
     content = content.replace('<CENTER>', '').replace('</CENTER>', '')
-    content = content.replace('<HR WIDTH = 65% Align=Center SIZE=1>', '')
     content = content.replace('&nbsp;', '')
     content = content.replace('<br>', '')
-    
+    # Remove fonts and non-standard tags
+    content = content.replace('<HR WIDTH = 65% Align=Center SIZE=1>', '')
     content = content.replace('<font color=navy>', '')
     content = content.replace('<font color=Green>', '')
     content = content.replace('<font color=RoyalBlue>', '')
     content = content.replace('<font color=Red>', '')
     content = content.replace('</font color>', '')
-
+    content = content.replace('<Font>', '').replace('</Font>', '')
+    content = content.replace('<font>', '').replace('</font>', '')
     content = content.replace('<font face="Arial" color="Black" size="2">', '')
     content = content.replace('<font face="Arial" color="SteelBlue" size="3">', '')
     content = content.replace('<font face="Arial" color="Navy" size="2">', '')
     content = content.replace('<font face="Arial" color="Black" size="1">', '')
-    content = content.replace('<Font>', '').replace('</Font>', '')
-    content = content.replace('<font>', '').replace('</font>', '')
-    
+    # Remove useless bold, italic and underline tags
     content = content.replace('<b>', '').replace('</b>', '')
     content = content.replace('<i>', '').replace('</i>', '')
     content = content.replace('<u>', '').replace('</u>', '')
