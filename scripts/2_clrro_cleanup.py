@@ -40,14 +40,29 @@ def remove_unbalanced_tags(content):
     content = content.replace('</HEAD>', '').replace('<HEAD>', '')
     content = content.replace('</head>', '').replace('<head>', '')
     content = content.replace('<BR>', '').replace('<HR>', '')
-    content = content.replace('<CENTER>', '')
-    content = content.replace('<font color=navy>', '<font color="Navy">')
-    content = content.replace('<font color=Green>', '<font color="Green">')
-    content = content.replace('<font color=RoyalBlue>', '<font color="RoyalBlue">')
-    content = content.replace('<font color=Red>', '<font color="Red">')
-    content = content.replace('</font color>', '</font>')
+    content = content.replace('<CENTER>', '').replace('</CENTER>', '')
     content = content.replace('<HR WIDTH = 65% Align=Center SIZE=1>', '')
-    content = content.replace('<font face="Arial" color="Black" size="2">', '<font>')
+    content = content.replace('&nbsp;', '')
+    content = content.replace('<br>', '')
+    
+    content = content.replace('<font color=navy>', '')
+    content = content.replace('<font color=Green>', '')
+    content = content.replace('<font color=RoyalBlue>', '')
+    content = content.replace('<font color=Red>', '')
+    content = content.replace('</font color>', '')
+
+    content = content.replace('<font face="Arial" color="Black" size="2">', '')
+    content = content.replace('<font face="Arial" color="SteelBlue" size="3">', '')
+    content = content.replace('<font face="Arial" color="Navy" size="2">', '')
+    content = content.replace('<font face="Arial" color="Black" size="1">', '')
+    content = content.replace('<Font>', '').replace('</Font>', '')
+    content = content.replace('<font>', '').replace('</font>', '')
+    
+    content = content.replace('<b>', '').replace('</b>', '')
+    content = content.replace('<i>', '').replace('</i>', '')
+    content = content.replace('<u>', '').replace('</u>', '')
+    content = content.replace('<U>', '').replace('</U>', '')
+    
     return content
 
 def main():
