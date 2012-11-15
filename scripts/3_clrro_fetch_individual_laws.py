@@ -4,6 +4,7 @@ import sys, os, time
 from xml.etree import ElementTree as parse
 
 
+
 def get_all_downloaded_laws_per_year(temporary_clr_ro_dir):
     laws_files = [ os.path.join(temporary_clr_ro_dir, file) 
                  for file in os.listdir(temporary_clr_ro_dir)]
