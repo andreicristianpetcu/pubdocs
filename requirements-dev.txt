@@ -4,3 +4,4 @@ Fabric==1.5.0
 paramiko==1.9.0
 pycrypto==2.6
 nose==1.2.1
+mechanize==0.2.5
